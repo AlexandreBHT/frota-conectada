@@ -59,7 +59,7 @@ function AuthPage() {
           <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary text-primary-foreground">
             <Truck className="h-6 w-6" />
           </div>
-          <CardTitle>FrotaControl</CardTitle>
+          <CardTitle>Controle de Frota BHT</CardTitle>
           <CardDescription>Acesse sua conta para gerenciar a frota</CardDescription>
         </CardHeader>
         <CardContent>
