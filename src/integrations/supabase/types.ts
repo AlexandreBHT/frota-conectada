@@ -14,16 +14,220 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      maintenances: {
+        Row: {
+          cost: number
+          created_at: string
+          date: string
+          description: string
+          id: string
+          km_interval: number | null
+          last_done_at: string | null
+          last_done_km: number | null
+          months_interval: number | null
+          odometer: number
+          status: Database["public"]["Enums"]["maint_status"]
+          type: Database["public"]["Enums"]["maint_type"]
+          vehicle_id: string
+        }
+        Insert: {
+          cost?: number
+          created_at?: string
+          date?: string
+          description: string
+          id?: string
+          km_interval?: number | null
+          last_done_at?: string | null
+          last_done_km?: number | null
+          months_interval?: number | null
+          odometer?: number
+          status?: Database["public"]["Enums"]["maint_status"]
+          type: Database["public"]["Enums"]["maint_type"]
+          vehicle_id: string
+        }
+        Update: {
+          cost?: number
+          created_at?: string
+          date?: string
+          description?: string
+          id?: string
+          km_interval?: number | null
+          last_done_at?: string | null
+          last_done_km?: number | null
+          months_interval?: number | null
+          odometer?: number
+          status?: Database["public"]["Enums"]["maint_status"]
+          type?: Database["public"]["Enums"]["maint_type"]
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "maintenances_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      trips: {
+        Row: {
+          checklist: Json
+          created_at: string
+          destination: string
+          driver_id: string
+          driver_name: string
+          end_km: number | null
+          ended_at: string | null
+          fuel_cost: number | null
+          fuel_liters: number | null
+          id: string
+          notes: string | null
+          start_km: number
+          started_at: string
+          vehicle_id: string
+        }
+        Insert: {
+          checklist?: Json
+          created_at?: string
+          destination: string
+          driver_id: string
+          driver_name: string
+          end_km?: number | null
+          ended_at?: string | null
+          fuel_cost?: number | null
+          fuel_liters?: number | null
+          id?: string
+          notes?: string | null
+          start_km: number
+          started_at?: string
+          vehicle_id: string
+        }
+        Update: {
+          checklist?: Json
+          created_at?: string
+          destination?: string
+          driver_id?: string
+          driver_name?: string
+          end_km?: number | null
+          ended_at?: string | null
+          fuel_cost?: number | null
+          fuel_liters?: number | null
+          id?: string
+          notes?: string | null
+          start_km?: number
+          started_at?: string
+          vehicle_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trips_vehicle_id_fkey"
+            columns: ["vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      vehicles: {
+        Row: {
+          created_at: string
+          fuel_type: Database["public"]["Enums"]["fuel_type"]
+          id: string
+          model: string
+          odometer: number
+          plate: string
+          status: Database["public"]["Enums"]["vehicle_status"]
+          year: number
+        }
+        Insert: {
+          created_at?: string
+          fuel_type?: Database["public"]["Enums"]["fuel_type"]
+          id?: string
+          model: string
+          odometer?: number
+          plate: string
+          status?: Database["public"]["Enums"]["vehicle_status"]
+          year: number
+        }
+        Update: {
+          created_at?: string
+          fuel_type?: Database["public"]["Enums"]["fuel_type"]
+          id?: string
+          model?: string
+          odometer?: number
+          plate?: string
+          status?: Database["public"]["Enums"]["vehicle_status"]
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "gestor" | "motorista"
+      fuel_type: "gasolina" | "diesel" | "etanol" | "flex"
+      maint_status: "agendada" | "concluida"
+      maint_type:
+        | "preventiva"
+        | "corretiva"
+        | "revisao"
+        | "troca_oleo"
+        | "pneus"
+      vehicle_status: "disponivel" | "em_uso" | "manutencao"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +354,12 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["gestor", "motorista"],
+      fuel_type: ["gasolina", "diesel", "etanol", "flex"],
+      maint_status: ["agendada", "concluida"],
+      maint_type: ["preventiva", "corretiva", "revisao", "troca_oleo", "pneus"],
+      vehicle_status: ["disponivel", "em_uso", "manutencao"],
+    },
   },
 } as const
