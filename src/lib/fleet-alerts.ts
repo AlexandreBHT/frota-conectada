@@ -17,7 +17,11 @@ export function computeAlert(m: Maintenance, vehicle: Vehicle | undefined): Main
   if (m.status !== "agendada") return { maintenance: m, vehicle, status: "ok", reason: "" };
 
   const reasons: string[] = [];
-  let worst: AlertStatus = "ok";
+  const state = { worst: "ok" as AlertStatus };
+  const bump = (s: AlertStatus) => {
+    if (s === "vencida" || (s === "proxima" && state.worst !== "vencida")) state.worst = s;
+  };
+
 
   // KM based
   if (m.km_interval && m.last_done_km != null && vehicle) {
