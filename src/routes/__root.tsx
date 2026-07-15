@@ -77,14 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "FrotaControl — Gestão de Frota" },
+      { name: "description", content: "Controle de frota: checklist pré-viagem, consumo de combustível e manutenções." },
+      { name: "author", content: "FrotaControl" },
+      { property: "og:title", content: "FrotaControl — Gestão de Frota" },
+      { property: "og:description", content: "Checklist, consumo e manutenções da sua frota em um só lugar." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
