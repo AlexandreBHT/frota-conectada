@@ -39,7 +39,7 @@ export const createVehicle = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: {
     plate: string; model: string; year: number; odometer: number;
-    fuel_type: Vehicle["fuel_type"];
+    fuel_type: Vehicle["fuel_type"]; vehicle_type: Vehicle["vehicle_type"]; max_load_kg: number;
   }) => input)
   .handler(async ({ data, context }) => {
     const { error } = await context.supabase.from("vehicles").insert({
@@ -48,6 +48,8 @@ export const createVehicle = createServerFn({ method: "POST" })
       year: data.year,
       odometer: data.odometer,
       fuel_type: data.fuel_type,
+      vehicle_type: data.vehicle_type,
+      max_load_kg: data.max_load_kg,
       status: "disponivel",
     });
     if (error) throw new Error(error.message);

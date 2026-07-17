@@ -1,5 +1,6 @@
 export type VehicleStatus = "disponivel" | "em_uso" | "manutencao";
 export type FuelType = "gasolina" | "diesel" | "etanol" | "flex";
+export type VehicleType = "caminhao" | "caminhao_munck" | "bongo" | "utilitario";
 export type MaintType = "preventiva" | "corretiva" | "revisao" | "troca_oleo" | "pneus";
 export type MaintStatus = "agendada" | "concluida";
 export type AppRole = "gestor" | "motorista";
@@ -28,6 +29,8 @@ export type Vehicle = {
   odometer: number;
   status: VehicleStatus;
   fuel_type: FuelType;
+  vehicle_type: VehicleType;
+  max_load_kg: number;
   created_at: string;
 };
 
@@ -87,4 +90,12 @@ export const MAINT_TYPE_LABEL: Record<MaintType, string> = {
   revisao: "Revisão",
   troca_oleo: "Troca de óleo",
   pneus: "Pneus",
+};
+
+
+export const VEHICLE_TYPE_LABEL: Record<VehicleType, string> = {
+  caminhao: "Caminhão",
+  caminhao_munck: "Caminhão com Munck",
+  bongo: "Bongo",
+  utilitario: "Utilitário",
 };

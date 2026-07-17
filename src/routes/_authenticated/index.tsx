@@ -17,8 +17,9 @@ import {
 } from "@/lib/fleet.functions";
 import {
   CHECKLIST_LABELS, CHECKLIST_KEYS, STATUS_LABEL, STATUS_STYLES, MAINT_TYPE_LABEL,
-  type ChecklistItem, type Vehicle, type Trip, type Maintenance,
+  VEHICLE_TYPE_LABEL, type ChecklistItem, type Vehicle, type Trip, type Maintenance,
 } from "@/lib/fleet-types";
+import { getSaoPauloRodizioStatus } from "@/lib/traffic/sao-paulo-rodizio";
 import { computeAllAlerts } from "@/lib/fleet-alerts";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -231,14 +232,14 @@ function AlertsBanner({ alerts, onGo }: { alerts: ReturnType<typeof computeAllAl
 function VehiclesTab({ vehicles, isGestor }: { vehicles: Vehicle[]; isGestor: boolean }) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [form, setForm] = useState({ plate: "", model: "", year: 2024, odometer: 0, fuel_type: "flex" as Vehicle["fuel_type"] });
+  const [form, setForm] = useState({ plate: "", model: "", year: 2024, odometer: 0, fuel_type: "flex" as Vehicle["fuel_type"], vehicle_type: "utilitario" as Vehicle["vehicle_type"], max_load_kg: 0 });
   const m = useMutation({
     mutationFn: () => createVehicle({ data: form }),
     onSuccess: () => {
       toast.success("Veículo adicionado");
       qc.invalidateQueries({ queryKey: ["vehicles"] });
       setOpen(false);
-      setForm({ plate: "", model: "", year: 2024, odometer: 0, fuel_type: "flex" });
+      setForm({ plate: "", model: "", year: 2024, odometer: 0, fuel_type: "flex", vehicle_type: "utilitario", max_load_kg: 0 });
     },
     onError: (e) => toast.error(e instanceof Error ? e.message : "Erro"),
   });
@@ -271,6 +272,21 @@ function VehiclesTab({ vehicles, isGestor }: { vehicles: Vehicle[]; isGestor: bo
                   </div>
                   <div className="grid gap-2"><Label>KM atual</Label>
                     <Input type="number" value={form.odometer} onChange={(e) => setForm({ ...form, odometer: Number(e.target.value) })} />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="grid gap-2"><Label>Tipo do veículo</Label>
+                    <Select value={form.vehicle_type} onValueChange={(v) => setForm({ ...form, vehicle_type: v as Vehicle["vehicle_type"] })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {Object.entries(VEHICLE_TYPE_LABEL).map(([value, label]) => (
+                          <SelectItem key={value} value={value}>{label}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="grid gap-2"><Label>Capacidade de carga (kg)</Label>
+                    <Input type="number" min={0} value={form.max_load_kg} onChange={(e) => setForm({ ...form, max_load_kg: Number(e.target.value) })} />
                   </div>
                 </div>
                 <div className="grid gap-2"><Label>Combustível</Label>
@@ -310,6 +326,8 @@ function VehiclesTab({ vehicles, isGestor }: { vehicles: Vehicle[]; isGestor: bo
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs">
                 <div><span className="text-muted-foreground">Ano:</span> <span className="font-medium">{v.year}</span></div>
                 <div><span className="text-muted-foreground">KM:</span> <span className="font-medium">{v.odometer.toLocaleString("pt-BR")}</span></div>
+                <div><span className="text-muted-foreground">Tipo:</span> <span className="font-medium">{VEHICLE_TYPE_LABEL[v.vehicle_type]}</span></div>
+                <div><span className="text-muted-foreground">Carga:</span> <span className="font-medium">{v.max_load_kg.toLocaleString("pt-BR")} kg</span></div>
                 <div className="col-span-2"><span className="text-muted-foreground">Combustível:</span> <span className="font-medium capitalize">{v.fuel_type}</span></div>
               </div>
             </div>
@@ -338,6 +356,7 @@ function ChecklistTab({
   const available = vehicles.filter((v) => v.status === "disponivel");
   const selectedVehicle = vehicles.find((v) => v.id === vehicleId);
   const allChecked = CHECKLIST_KEYS.every((k) => checklist[k]);
+  const rodizio = selectedVehicle ? getSaoPauloRodizioStatus(selectedVehicle.plate) : null;
 
   const startM = useMutation({
     mutationFn: () => startTrip({
@@ -387,6 +406,18 @@ function ChecklistTab({
               <Input value={destination} onChange={(e) => setDestination(e.target.value)} placeholder="Ex.: Cliente X - São Paulo/SP" />
             </div>
           </div>
+          {selectedVehicle && (
+            <div className={`rounded-lg border p-4 ${rodizio?.active ? "border-red-300 bg-red-50" : rodizio?.restrictionDay ? "border-amber-300 bg-amber-50" : "border-emerald-200 bg-emerald-50"}`}>
+              <div className="flex items-start gap-3">
+                <AlertTriangle className={`mt-0.5 h-5 w-5 ${rodizio?.active ? "text-red-700" : rodizio?.restrictionDay ? "text-amber-700" : "text-emerald-700"}`} />
+                <div>
+                  <div className="font-semibold">Situação do rodízio — placa {selectedVehicle.plate}</div>
+                  <div className="text-sm">{rodizio?.message}</div>
+                  <div className="mt-1 text-xs text-muted-foreground">Aviso inicial baseado no rodízio municipal. Suspensões, feriados e restrições específicas de caminhões serão integrados em uma etapa futura.</div>
+                </div>
+              </div>
+            </div>
+          )}
           <div>
             <div className="mb-3 flex items-center justify-between">
               <h3 className="text-sm font-semibold">Itens de segurança</h3>

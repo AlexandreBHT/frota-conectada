@@ -176,30 +176,36 @@ export type Database = {
           created_at: string
           fuel_type: Database["public"]["Enums"]["fuel_type"]
           id: string
+          max_load_kg: number
           model: string
           odometer: number
           plate: string
           status: Database["public"]["Enums"]["vehicle_status"]
+          vehicle_type: Database["public"]["Enums"]["vehicle_type"]
           year: number
         }
         Insert: {
           created_at?: string
           fuel_type?: Database["public"]["Enums"]["fuel_type"]
           id?: string
+          max_load_kg?: number
           model: string
           odometer?: number
           plate: string
           status?: Database["public"]["Enums"]["vehicle_status"]
+          vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
           year: number
         }
         Update: {
           created_at?: string
           fuel_type?: Database["public"]["Enums"]["fuel_type"]
           id?: string
+          max_load_kg?: number
           model?: string
           odometer?: number
           plate?: string
           status?: Database["public"]["Enums"]["vehicle_status"]
+          vehicle_type?: Database["public"]["Enums"]["vehicle_type"]
           year?: number
         }
         Relationships: []
@@ -228,6 +234,7 @@ export type Database = {
         | "troca_oleo"
         | "pneus"
       vehicle_status: "disponivel" | "em_uso" | "manutencao"
+      vehicle_type: "caminhao" | "caminhao_munck" | "bongo" | "utilitario"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -360,6 +367,7 @@ export const Constants = {
       maint_status: ["agendada", "concluida"],
       maint_type: ["preventiva", "corretiva", "revisao", "troca_oleo", "pneus"],
       vehicle_status: ["disponivel", "em_uso", "manutencao"],
+      vehicle_type: ["caminhao", "caminhao_munck", "bongo", "utilitario"],
     },
   },
 } as const
